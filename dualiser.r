@@ -1,3 +1,9 @@
+###
+# This is the code that was originally used in the dissertations, but it has now
+# been converted to Python (see `dualiser.py` and `main.py`). This has been kept
+# only for reference and is not intended to be run.
+###
+
 
 pdual <- function(P=c(1,1,1), col="red"){
 

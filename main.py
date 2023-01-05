@@ -160,8 +160,10 @@ class CubicCurve(Points):
         if save:
             plt.savefig(
                 "cubic-curve.png" if size else "cubic-dual.png",
-                bbox_inches="tight",
+                # bbox_inches="tight",
+                bbox_inches=0,
                 dpi=1080,
+                format="png",
             )
         plt.show()
 
