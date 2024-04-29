@@ -134,7 +134,7 @@ class CubicCurve(Points):
         self.cubic_points = []
         for i in range(number):
             x = lower + (i * diff / denominator)
-            self.cubic_points.append(dualiser.Point(x, x**3))
+            self.cubic_points.append(dualiser.Point(x, x ** 3))
 
     def plot_points(self, size: float = 5) -> None:
         dualiser.plot_points(self.cubic_points, color="rainbow", s=size)
