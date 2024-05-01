@@ -1,10 +1,13 @@
 """
 Points, duals, and plotting functions.
 """
+
 from __future__ import annotations
 
+import abc
 import math
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import matplotlib.cm
 import matplotlib.pyplot as plt
@@ -74,9 +77,9 @@ def plot_dual(point: Point, **kwargs) -> None:
 
 
 def _plot_rainbow(
-        plotter: Callable,
-        points: list[Point],
-        **kwargs,
+    plotter: Callable,
+    points: list[Point],
+    **kwargs,
 ) -> None:
     """
     Plot the points on a matplotlib graph using a colour rainbow.
@@ -85,10 +88,7 @@ def _plot_rainbow(
 
     - https://stackoverflow.com/a/33905962/8213085
     """
-    colors = [
-        matplotlib.cm.jet(x)
-        for x in np.linspace(0.0, 1.0, len(points))
-    ]
+    colors = [matplotlib.cm.jet(x) for x in np.linspace(0.0, 1.0, len(points))]
     for i, point in enumerate(points):
         plotter(point=point, color=colors[i], **kwargs)
 
@@ -113,3 +113,30 @@ def plot_duals(points: list[Point], color: Any, **kwargs) -> None:
     else:
         for point in points:
             plot_dual(point=point, color=color, **kwargs)
+
+
+class Points(abc.ABC):
+    """
+    A set of points that can be plotted.
+    """
+
+    @abc.abstractmethod
+    def plot_points(self, size: float) -> None:
+        """
+        Plot the points on a graph.
+        """
+        pass
+
+    @abc.abstractmethod
+    def plot_duals(self, width: float) -> None:
+        """
+        Plot the duals of the points on a graph.
+        """
+        pass
+
+    @abc.abstractmethod
+    def plot(self, size: float = None, width: float = None) -> None:
+        """
+        Plot the points and display the graph.
+        """
+        pass
