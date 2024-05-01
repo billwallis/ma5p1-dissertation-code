@@ -21,6 +21,7 @@ repos:
         name: Align mixed line ending
       - id: check-added-large-files
         name: Check for large files
+        exclude: assets/
       - id: check-json
         name: Check JSON files are valid and parseable
       - id: check-yaml
