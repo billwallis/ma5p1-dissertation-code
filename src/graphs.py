@@ -6,8 +6,6 @@ from __future__ import annotations
 
 import math
 
-import matplotlib.pyplot as plt
-
 import dualiser
 
 
@@ -17,6 +15,14 @@ class SimpleTriangularGrid(dualiser.Points):
     """
 
     def __init__(self):
+        """
+        Define the points on a simple triangular grid.
+
+        The points lie on three lines: ``P``, ``Q``, and ``R``.
+        """
+        self.x_lim = (-2, 2)
+        self.y_lim = (-2, 2)
+
         self.p_points = [
             dualiser.Point(1, -1, 1),
             dualiser.Point(-1, 1, 0),
@@ -33,26 +39,26 @@ class SimpleTriangularGrid(dualiser.Points):
             dualiser.Point(4, 0, -3),
         ]
 
-    def plot_points(self, size: float = 5) -> None:
+    def plot_points(self, size: float) -> None:
+        """
+        Plot each of the points that lie on the lines ``P``, ``Q``, and ``R``.
+
+        :param size: The size of the points on the graph.
+        """
         dualiser.plot_points(self.p_points, color="r", s=size)
         dualiser.plot_points(self.q_points, color="g", s=size)
         dualiser.plot_points(self.r_points, color="b", s=size)
 
-    def plot_duals(self, width: float = 1) -> None:
+    def plot_duals(self, width: float) -> None:
+        """
+        Plot the duals of the points that lie on the lines ``P``, ``Q``, and
+        ``R``.
+
+        :param width: The width of the lines on the graph.
+        """
         dualiser.plot_duals(self.p_points, color="r", linewidth=width)
         dualiser.plot_duals(self.q_points, color="g", linewidth=width)
         dualiser.plot_duals(self.r_points, color="b", linewidth=width)
-
-    # noinspection DuplicatedCode
-    def plot(self, size: float = None, width: float = None) -> None:
-        plt.xlim(-2, 2)
-        plt.ylim(-2, 2)
-        plt.axis("off")
-        plt.gca().set_aspect("equal")
-
-        self.plot_points(size=size) if size else None
-        self.plot_duals(width=width) if width else None
-        plt.show()
 
 
 class UnitCircle(dualiser.Points):
@@ -61,6 +67,15 @@ class UnitCircle(dualiser.Points):
     """
 
     def __init__(self, roots: int):
+        """
+        Define the points on a unit circle.
+
+        The points will be the roots of unity with their corresponding points at
+        infinity.
+        """
+        self.x_lim = (-5, 5)
+        self.y_lim = (-5, 5)
+
         self.roots_of_unity = [
             dualiser.Point(
                 x=math.cos(2 * t * math.pi / roots),
@@ -77,24 +92,26 @@ class UnitCircle(dualiser.Points):
             for t in range(roots)
         ]
 
-    def plot_points(self, size: float = 5) -> None:
-        dualiser.plot_points(self.roots_of_unity, color="black", s=size)
-        # dualiser.plot_points(self.points_at_infinity, color="black", s=size)
+    def plot_points(self, size: float) -> None:
+        """
+        Plot the roots of unity.
 
-    def plot_duals(self, width: float = 1) -> None:
+        There's no point in plotting the points at infinity, as they are
+        infinitely far away!
+
+        :param size: The size of the points on the graph.
+        """
+        dualiser.plot_points(self.roots_of_unity, color="black", s=size)
+
+    def plot_duals(self, width: float) -> None:
+        """
+        Plot the duals of the roots of unity and their corresponding points at
+        infinity.
+
+        :param width: The width of the lines on the graph.
+        """
         dualiser.plot_duals(self.roots_of_unity, color="black", linewidth=width)
         dualiser.plot_duals(self.points_at_infinity, color="rainbow", linewidth=width)
-
-    # noinspection DuplicatedCode
-    def plot(self, size: float = None, width: float = None) -> None:
-        plt.xlim(-5, 5)
-        plt.ylim(-5, 5)
-        plt.axis("off")
-        plt.gca().set_aspect("equal")
-
-        self.plot_points(size=size) if size else None
-        self.plot_duals(width=width) if width else None
-        plt.show()
 
 
 class CubicCurve(dualiser.Points):
@@ -103,8 +120,15 @@ class CubicCurve(dualiser.Points):
     """
 
     def __init__(self, number: int):
+        """
+        Define the points on a cubic curve.
+        """
         if number < 2:
             raise ValueError(f"Must have at least 2 points, found {number}")
+
+        self.x_lim = (-1.5, 1.5)
+        self.y_lim = (-0.04, 0.04)
+        self.aspect = "auto"
 
         lower, upper = -10, 10
         diff = upper - lower
@@ -115,50 +139,41 @@ class CubicCurve(dualiser.Points):
             x = lower + (i * diff / denominator)
             self.cubic_points.append(dualiser.Point(x, x**3))
 
-    def plot_points(self, size: float = 5) -> None:
+    def plot_points(self, size: float) -> None:
+        """
+        Plot the points on the cubic curve.
+
+        :param size: The size of the points on the graph.
+        """
         dualiser.plot_points(self.cubic_points, color="rainbow", s=size)
 
-    def plot_duals(self, width: float = 1) -> None:
+    def plot_duals(self, width: float) -> None:
+        """
+        Plot the duals of the points on the cubic curve.
+
+        :param width: The width of the lines on the graph.
+        """
         dualiser.plot_duals(self.cubic_points, color="rainbow", linewidth=width)
 
-    # noinspection DuplicatedCode
-    def plot(self, size: float = None, width: float = None, save: bool = False) -> None:
+    def plot(
+        self,
+        size: float = None,
+        width: float = None,
+        save: bool = False,
+        path: str = None,
+    ) -> None:
+        """
+        Plot the points and/or duals and display the graph, as per the
+        superclass.
+
+        Note that the cubic curve cannot plot both the points and the duals at
+        the same time.
+
+        :raises ValueError: If both the size and width are given.
+        """
         if size and width:
             raise ValueError(
                 "For the cubic curve, the points and duals cannot both be printed."
             )
 
-        if not size:
-            plt.xlim(-1.5, 1.5)
-            plt.ylim(-0.04, 0.04)
-        plt.axis("off")
-
-        self.plot_points(size=size) if size else None
-        self.plot_duals(width=width) if width else None
-
-        if save:
-            plt.savefig(
-                "cubic-curve.png" if size else "cubic-dual.png",
-                # bbox_inches="tight",
-                bbox_inches=0,
-                dpi=1080,
-                format="png",
-            )
-        plt.show()
-
-
-def main() -> None:
-    SimpleTriangularGrid().plot(size=5, width=0.75)
-    UnitCircle(20).plot(width=0.75)
-
-    CubicCurve(19).plot(width=0.75)
-    CubicCurve(19).plot(width=2)
-    CubicCurve(19).plot(width=3)
-    CubicCurve(41).plot(width=0.75)
-    CubicCurve(61).plot(width=0.75)
-    CubicCurve(101).plot(width=0.75)
-    CubicCurve(151).plot(width=0.75, save=True)
-
-
-if __name__ == "__main__":
-    main()
+        super().plot(size, width, save, path)

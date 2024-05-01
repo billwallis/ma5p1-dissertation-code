@@ -7,7 +7,7 @@ from __future__ import annotations
 import abc
 import math
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Literal
 
 import matplotlib.cm
 import matplotlib.pyplot as plt
@@ -15,7 +15,15 @@ import numpy as np
 
 
 class Point:
-    def __init__(self, x: float, y: float, z: float = 1):
+    """
+    A projective point in 3D space.
+    """
+
+    x: float
+    y: float
+    z: float
+
+    def __init__(self, x: float, y: float, z: float = 1.0):
         self.x = x
         self.y = y
         self.z = z
@@ -56,7 +64,75 @@ class Point:
         )
 
 
-def plot_point(point: Point, color: str, **kwargs) -> None:
+class Points(abc.ABC):
+    """
+    A set of points that can be plotted.
+    """
+
+    x_lim: tuple[float, float]
+    y_lim: tuple[float, float]
+    aspect: Literal["equal", "auto"] = "equal"
+
+    @abc.abstractmethod
+    def plot_points(self, size: float) -> None:
+        """
+        Plot the points on a graph.
+
+        :param size: The size of the points on the graph.
+        """
+
+    @abc.abstractmethod
+    def plot_duals(self, width: float) -> None:
+        """
+        Plot the duals of the points on a graph.
+
+        :param width: The width of the lines on the graph.
+        """
+
+    def plot(
+        self,
+        size: float = None,
+        width: float = None,
+        save: bool = False,
+        path: str = None,
+    ) -> None:
+        """
+        Plot the points and/or duals and display the graph.
+
+        :param size: The size of the points on the graph. If not provided, the
+            points will not be plotted.
+        :param width: The width of the lines on the graph. If not provided, the
+            duals will not be plotted.
+        :param save: Whether to save the image to a file.
+        :param path: The path to save the image to.
+        """
+        if not size and not width:
+            raise ValueError("Either size or width must be provided to plot.")
+
+        plt.xlim(*self.x_lim)
+        plt.ylim(*self.y_lim)
+        plt.gca().set_aspect(self.aspect)
+        plt.axis("off")
+
+        self.plot_points(size=size) if size else None
+        self.plot_duals(width=width) if width else None
+
+        if save:
+            if not path:
+                raise ValueError("Path must be provided to save the image.")
+            plt.savefig(
+                path,
+                # bbox_inches="tight",
+                bbox_inches=0,
+                dpi=1080,
+                format="png",
+            )
+            print(f"Image saved to {path}")
+
+        plt.show()
+
+
+def _plot_point(point: Point, color: str, **kwargs) -> None:
     """
     Plot the point on a matplotlib graph.
     """
@@ -69,7 +145,7 @@ def plot_point(point: Point, color: str, **kwargs) -> None:
         )
 
 
-def plot_dual(point: Point, **kwargs) -> None:
+def _plot_dual(point: Point, **kwargs) -> None:
     """
     Plot the dual of the point on a matplotlib graph.
     """
@@ -97,46 +173,19 @@ def plot_points(points: list[Point], color: str, **kwargs) -> None:
     """
     Plot the points on a matplotlib graph.
     """
-    if color.lower() == "rainbow":
-        _plot_rainbow(plotter=plot_point, points=points, **kwargs)
+    if color.casefold() == "rainbow":
+        _plot_rainbow(plotter=_plot_point, points=points, **kwargs)
     else:
         for point in points:
-            plot_point(point=point, color=color, **kwargs)
+            _plot_point(point=point, color=color, **kwargs)
 
 
 def plot_duals(points: list[Point], color: Any, **kwargs) -> None:
     """
     Plot the dual of the points on a matplotlib graph.
     """
-    if color.lower() == "rainbow":
-        _plot_rainbow(plotter=plot_dual, points=points, **kwargs)
+    if color.casefold() == "rainbow":
+        _plot_rainbow(plotter=_plot_dual, points=points, **kwargs)
     else:
         for point in points:
-            plot_dual(point=point, color=color, **kwargs)
-
-
-class Points(abc.ABC):
-    """
-    A set of points that can be plotted.
-    """
-
-    @abc.abstractmethod
-    def plot_points(self, size: float) -> None:
-        """
-        Plot the points on a graph.
-        """
-        pass
-
-    @abc.abstractmethod
-    def plot_duals(self, width: float) -> None:
-        """
-        Plot the duals of the points on a graph.
-        """
-        pass
-
-    @abc.abstractmethod
-    def plot(self, size: float = None, width: float = None) -> None:
-        """
-        Plot the points and display the graph.
-        """
-        pass
+            _plot_dual(point=point, color=color, **kwargs)
