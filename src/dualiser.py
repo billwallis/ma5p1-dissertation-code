@@ -50,11 +50,10 @@ class Point:
                     (math.inf, math.inf),
                     (math.inf, math.inf),
                 )
-            else:
-                return (
-                    (-self.z / self.x, -1),
-                    (-self.z / self.x, 1),
-                )
+            return (
+                (-self.z / self.x, -1),
+                (-self.z / self.x, 1),
+            )
 
         m = -self.x / self.y
         c = -self.z / self.y
@@ -91,10 +90,10 @@ class Points(abc.ABC):
 
     def plot(
         self,
-        size: float = None,
-        width: float = None,
+        size: float | None = None,
+        width: float | None = None,
         save: bool = False,
-        path: str = None,
+        path: str | None = None,
     ) -> None:
         """
         Plot the points and/or duals and display the graph.
