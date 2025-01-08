@@ -8,6 +8,8 @@ import math
 
 import dualiser
 
+MIN_NUMBER_OF_POINTS = 2
+
 
 class SimpleTriangularGrid(dualiser.Points):
     """
@@ -111,7 +113,9 @@ class UnitCircle(dualiser.Points):
         :param width: The width of the lines on the graph.
         """
         dualiser.plot_duals(self.roots_of_unity, color="black", linewidth=width)
-        dualiser.plot_duals(self.points_at_infinity, color="rainbow", linewidth=width)
+        dualiser.plot_duals(
+            self.points_at_infinity, color="rainbow", linewidth=width
+        )
 
 
 class CubicCurve(dualiser.Points):
@@ -123,7 +127,7 @@ class CubicCurve(dualiser.Points):
         """
         Define the points on a cubic curve.
         """
-        if number < 2:
+        if number < MIN_NUMBER_OF_POINTS:
             raise ValueError(f"Must have at least 2 points, found {number}")
 
         self.x_lim = (-1.5, 1.5)
@@ -157,10 +161,10 @@ class CubicCurve(dualiser.Points):
 
     def plot(
         self,
-        size: float = None,
-        width: float = None,
+        size: float | None = None,
+        width: float | None = None,
         save: bool = False,
-        path: str = None,
+        path: str | None = None,
     ) -> None:
         """
         Plot the points and/or duals and display the graph, as per the
